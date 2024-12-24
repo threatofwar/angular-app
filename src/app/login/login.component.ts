@@ -21,9 +21,8 @@ export class LoginComponent {
     if (this.username && this.password) {
       this.authService.login(this.username, this.password).subscribe({
         next: (response) => {
-          console.log(response)
           this.authService.storeToken(response);
-          // this.router.navigate(['/home']);
+          this.router.navigate(['/home']);
         },
         error: (err) => {
           console.error('Login failed', err);
