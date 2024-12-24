@@ -12,17 +12,18 @@ import { FormsModule } from "@angular/forms";
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
-  email: string = '';
+  username: string = '';
   password: string = '';
 
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
-    if (this.email && this.password) {
-      this.authService.login(this.email, this.password).subscribe({
+    if (this.username && this.password) {
+      this.authService.login(this.username, this.password).subscribe({
         next: (response) => {
+          console.log(response)
           this.authService.storeToken(response);
-          this.router.navigate(['/home']);
+          // this.router.navigate(['/home']);
         },
         error: (err) => {
           console.error('Login failed', err);

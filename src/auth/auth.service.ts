@@ -15,9 +15,9 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router, private cookieService: CookieService) {}
 
-  login(email: string, password: string): Observable<any> {
+  login(username: string, password: string): Observable<any> {
     // Replace with real API authentication call
-    return this.http.post(this.loginURL, { email, password });
+    return this.http.post(this.loginURL, { username, password });
   }
 
   logout() {
@@ -26,9 +26,20 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  storeToken(token: string) {
+  storeToken(token: any) {
     // Store JWT token in cookie
-    this.cookieService.set('jwtToken', token);
+    const isSecure = window.location.protocol === 'https:';
+    const accessToken = token.access_token;
+    const accessTokenExpirationDate = new Date();
+    accessTokenExpirationDate.setHours(accessTokenExpirationDate.getHours() + 24); // 24 hours
+
+    this.cookieService.set('jwtToken', accessToken, accessTokenExpirationDate, '/', '', isSecure, 'Strict');
+
+    const refreshToken = token.refresh_token;
+    const refreshTokenExpirationDate = new Date();
+    refreshTokenExpirationDate.setDate(refreshTokenExpirationDate.getDate() + 7); // 7 days
+
+    this.cookieService.set('refreshToken', refreshToken, refreshTokenExpirationDate, '/', '', isSecure, 'Strict');
   }
 
   getToken() {
