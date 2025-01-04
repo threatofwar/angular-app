@@ -38,7 +38,6 @@ export class AuthService {
   }
 
   isAuthenticated(): Observable<boolean> {
-    return this.http.get<boolean>('https://api.shibidi.my/authenticated', { withCredentials: true });
-    // return this.http.get<boolean>('https://api.shibidi.war/authenticated', { withCredentials: true });
+    return this.http.get<boolean>(this.apiUrl + '/authenticated', { withCredentials: true });
   }
 }

@@ -104,6 +104,10 @@
         </form>
     </div>
 </div>
+<div *ngIf="verificationToken">
+  <p>Registration successful! Click the link below to verify your email:</p>
+  <a [href]="verificationLink" target="_blank">{{ verificationLink }}</a>
+</div>
 <h2>Profile Form</h2>
 <p>Username: {{ profileForm.value.username }}</p>
 <p>Email: {{ profileForm.value.email }}</p>

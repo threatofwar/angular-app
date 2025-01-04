@@ -2,14 +2,21 @@ import { Component } from '@angular/core';
 import {FormGroup, FormControl} from '@angular/forms';
 import {ReactiveFormsModule} from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { ENV } from '../../environments/environment';
+import { CommonModule } from '@angular/common'
 
 @Component({
   selector: 'app-registration',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './registration.component.html',
   styleUrl: './registration.component.scss'
 })
 export class RegistrationComponent {
+  private appUrl = ENV.appBaseUrl;
+  private apiUrl = ENV.apiBaseUrl;
+  verificationLink: string = '';
+  verificationToken: string = '';
+
   profileForm = new FormGroup({
     username: new FormControl(''),
     email: new FormControl(''),
@@ -30,11 +37,12 @@ export class RegistrationComponent {
       emails: [formData.email]
     };
     // Send POST request to backend API
-    this.http.post('https://api.shibidi.my/register', postData)
+    this.http.post(this.apiUrl +'/register', postData)
       .subscribe(
-        (response) => {
-          console.log('Response:', response);  // Handle success
-          alert('Registration successful!');
+        (response: any) => {
+          this.verificationToken = response.verification_token;
+          this.verificationLink = this.appUrl + '/verify-email?verification_token=' + this.verificationToken;
+          alert(this.appUrl +'/verify-email?verification_token=' + response.verification_token);
         },
         (error) => {
           console.error('Error:', error);  // Handle error
