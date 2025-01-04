@@ -30,7 +30,7 @@ export class RegistrationComponent {
       emails: [formData.email]
     };
     // Send POST request to backend API
-    this.http.post('https://api.shibidi.war/register', postData)
+    this.http.post('https://api.shibidi.my/register', postData)
       .subscribe(
         (response) => {
           console.log('Response:', response);  // Handle success
