@@ -2,6 +2,7 @@
   "routes": {
     "/": {},
     "/home": {},
-    "/login": {}
+    "/login": {},
+    "/registration": {}
   }
 }
