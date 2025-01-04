@@ -3,6 +3,7 @@
     "/": {},
     "/home": {},
     "/login": {},
-    "/registration": {}
+    "/registration": {},
+    "/verify-email": {}
   }
 }
