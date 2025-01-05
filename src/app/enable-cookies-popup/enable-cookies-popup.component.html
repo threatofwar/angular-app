@@ -1,0 +1,14 @@
+<div *ngIf="visible" class="popup-overlay">
+    <div class="popup">
+      <h2>Cookies Required</h2>
+      <p>
+        Cookies are currently disabled in your browser. Please enable cookies to continue using the site with full functionality.
+      </p>
+      <p>
+        <a href="https://www.whatismybrowser.com/guides/how-to-enable-cookies/" target="_blank">
+          Learn how to enable cookies in your browser.
+        </a>
+      </p>
+      <button (click)="closePopup()">Close</button>
+    </div>
+</div>
