@@ -1,8 +1,10 @@
 {
   "routes": {
     "/": {},
+    "/forgot-password": {},
     "/home": {},
     "/login": {},
+    "/password-reset": {},
     "/registration": {},
     "/verify-email": {}
   }
