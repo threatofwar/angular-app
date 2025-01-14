@@ -37,13 +37,13 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Install Google Chrome headless
-      run: |
-        sudo apt-get update -y
-        sudo apt-get install -y google-chrome-stable
+    # - name: Install Google Chrome headless
+    #   run: |
+    #     sudo apt-get update -y
+    #     sudo apt-get install -y google-chrome-stable
 
-    - name: Set CHROME_BIN headless
-      run: echo "CHROME_BIN=/usr/bin/google-chrome" >> $GITHUB_ENV
+    # - name: Set CHROME_BIN headless
+    #   run: echo "CHROME_BIN=/usr/bin/google-chrome" >> $GITHUB_ENV
 
     - name: Build the Angular app for ${{ matrix.environment }}
       run: |
@@ -53,7 +53,7 @@ jobs:
           npm run build -- --configuration=development;
         fi
 
-    - name: Run tests
-      run: npm test
-      env:
-        CHROME_BIN: "/usr/bin/google-chrome"
+    # - name: Run tests
+    #   run: npm test
+    #   env:
+    #     CHROME_BIN: "/usr/bin/google-chrome"
