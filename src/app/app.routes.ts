@@ -6,12 +6,13 @@ import { ForgotPasswordComponent } from './forgot-password/forgot-password.compo
 import { PasswordResetComponent } from './password-reset/password-reset.component';
 import { DashboardComponent } from './auth/dashboard/dashboard.component';
 import { authGuard } from './core/auth/auth.guard';
+import { publicGuard } from './core/auth/public.guard';
 
 export const routes: Routes = [
-    { path: '', component: HomeComponent, canActivate: [authGuard] },
-    { path: 'login', component: LoginComponent },
-    { path: 'registration', component: RegistrationComponent },
-    { path: 'forgot-password', component: ForgotPasswordComponent },
-    { path: 'password-reset', component: PasswordResetComponent },
+    { path: '', component: HomeComponent },
+    { path: 'login', component: LoginComponent, canActivate: [publicGuard] },
+    { path: 'registration', component: RegistrationComponent, canActivate: [publicGuard] },
+    { path: 'forgot-password', component: ForgotPasswordComponent, canActivate: [publicGuard] },
+    { path: 'password-reset', component: PasswordResetComponent, canActivate: [publicGuard] },
     { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
 ];

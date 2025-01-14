@@ -1,24 +1,35 @@
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
-// import { Environment } from '../environment/environment';
-import { Observable, throwError, of } from 'rxjs';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { CookieService } from 'ngx-cookie-service';
-import { tap, catchError } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { catchError, map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { map } from 'rxjs/operators';
+import { CookieService } from 'ngx-cookie-service';
+import { SessionService } from '../session/session.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  // private apiUrl = Environment.apiUrl;
-  // private loggedIn = false;
+  private authenticatedSubject = new BehaviorSubject<boolean | null>(null);
+  private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient, private router: Router, private cookieService: CookieService) { }
+  constructor(
+    private http: HttpClient, 
+    private router: Router, 
+    private cookieService: CookieService, 
+    private sessionService: SessionService
+  ) { }
 
   login(username: string, password: string): Observable<any> {
-    return this.http.post('https://api.shibidi.war/login', { username, password }, { withCredentials: true }).pipe(
-      tap(response => console.log('Login response:', response)),
+    return this.http.post(`${this.apiUrl}/login`, { username, password }, { withCredentials: true }).pipe(
+      tap((response: any) => {
+        console.log('Login response:', response);
+        if (response && response.sessionData) {
+          this.sessionService.setSession(response.sessionData);
+          this.authenticatedSubject.next(true);
+        }
+      }),
       catchError(error => {
         return throwError(error);
       })
@@ -26,10 +37,15 @@ export class AuthService {
   }
 
   logout(): Observable<any> {
-    return this.http.post(`https://api.shibidi.war/logout`, {}, { responseType: 'json', withCredentials: true }).pipe(
+    return this.http.post(`${this.apiUrl}/logout`, {}, { responseType: 'json', withCredentials: true }).pipe(
       tap((response) => {
-        console.log('Logout response:', response); // Logs the response from the backend
+        console.log('Logout response:', response);
         console.log('Logged out successfully');
+        
+        this.sessionService.clearSession();
+        this.authenticatedSubject.next(false);
+        localStorage.removeItem('session');
+        
         this.router.navigate(['/']);
       }),
       catchError((error) => {
@@ -40,9 +56,34 @@ export class AuthService {
   }
   
   isAuthenticated(): Observable<boolean> {
-    return this.http.get<{ authenticated: boolean }>('https://api.shibidi.war/authenticated', { withCredentials: true }).pipe(
+    return this.http.get<{ authenticated: boolean }>(`${this.apiUrl}/authenticated`, { withCredentials: true }).pipe(
       map(response => response.authenticated),
-      catchError(() => of(false)) // maybe not needed
+      catchError(() => of(false))
     );
+  }
+
+  checkAuthentication(): Observable<boolean> {
+    if (this.authenticatedSubject.value !== null) {
+      console.log('cache authentication status: ', this.authenticatedSubject.value);
+      return of(this.authenticatedSubject.value);
+    }
+
+    console.log('Checking authentication status via API...');
+    return this.http.get<{ authenticated: boolean }>(`${this.apiUrl}/authenticated`, { withCredentials: true }).pipe(
+      map(response => {
+        console.log('Authentication check response:', response);
+        this.authenticatedSubject.next(response.authenticated);
+        return response.authenticated;
+      }),
+      catchError(error => {
+        console.error('Authentication check failed:', error);
+        this.authenticatedSubject.next(false);
+        return of(false);
+      })
+    );
+  }
+
+  clearAuthenticationStatus() {
+    this.authenticatedSubject.next(null);
   }
 }

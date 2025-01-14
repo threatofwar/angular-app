@@ -29,7 +29,8 @@ export class LoginComponent {
     this.isSubmitting = true;
 
     this.authService.login(this.username, this.password).pipe(
-      switchMap(() => this.authService.isAuthenticated())
+      // switchMap(() => this.authService.isAuthenticated())
+      switchMap(() => this.authService.checkAuthentication())
     ).subscribe({
       next: (authenticated) => {
         if (authenticated) {
