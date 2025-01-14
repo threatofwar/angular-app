@@ -1,11 +1,12 @@
 import { environment } from '../../../environments/environment';
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { SessionService } from '../session/session.service';
+import { isPlatformServer } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,8 @@ export class AuthService {
     private http: HttpClient, 
     private router: Router, 
     private cookieService: CookieService, 
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
   login(username: string, password: string): Observable<any> {
@@ -56,6 +58,9 @@ export class AuthService {
   }
   
   isAuthenticated(): Observable<boolean> {
+    if (this.isPrerendering()) {
+      return of(true);
+    }
     return this.http.get<{ authenticated: boolean }>(`${this.apiUrl}/authenticated`, { withCredentials: true }).pipe(
       map(response => response.authenticated),
       catchError(() => of(false))
@@ -63,6 +68,9 @@ export class AuthService {
   }
 
   checkAuthentication(): Observable<boolean> {
+    if (this.isPrerendering()) {
+      return of(true);
+    }
     if (this.authenticatedSubject.value !== null) {
       console.log('cache authentication status: ', this.authenticatedSubject.value);
       return of(this.authenticatedSubject.value);
@@ -85,5 +93,9 @@ export class AuthService {
 
   clearAuthenticationStatus() {
     this.authenticatedSubject.next(null);
+  }
+
+  private isPrerendering(): boolean {
+    return isPlatformServer(this.platformId);  // This checks if we're in the server-side rendering (prerendering) phase
   }
 }

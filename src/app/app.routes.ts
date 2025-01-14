@@ -9,7 +9,7 @@ import { authGuard } from './core/auth/auth.guard';
 import { publicGuard } from './core/auth/public.guard';
 
 export const routes: Routes = [
-    { path: '', component: HomeComponent },
+    { path: '', component: HomeComponent, canActivate: [publicGuard] },
     { path: 'login', component: LoginComponent, canActivate: [publicGuard] },
     { path: 'registration', component: RegistrationComponent, canActivate: [publicGuard] },
     { path: 'forgot-password', component: ForgotPasswordComponent, canActivate: [publicGuard] },
