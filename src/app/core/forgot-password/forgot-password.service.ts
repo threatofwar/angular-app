@@ -16,7 +16,8 @@ export class ForgotPasswordService {
     return this.http.post(this.apiUrl + '/forgot-password', { email });
   }
 
-  resetPassword(formData: { password_reset_token: string | null; password: string }): Observable<any> {
+  resetPassword(formData: { password_reset_token: string | null; new_password: string }): Observable<any> {
+    console.log(formData)
     return this.http.post(this.apiUrl + '/reset-password', formData);
   }
 }
