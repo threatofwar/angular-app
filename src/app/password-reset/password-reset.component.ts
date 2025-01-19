@@ -40,13 +40,13 @@ export class PasswordResetComponent implements OnInit {
 
     const formData = {
       password_reset_token: this.passwordResetToken,
-      password: password,
+      new_password: password,
     };
     console.log('Form submitted:', formData);
 
     this.forgotPasswordService.resetPassword(formData).subscribe({
       next: (response) => {
-        console.log('Password reset successful:', response);
+        // console.log('Password reset successful:', response);
         this.successMessage = 'Your password has been successfully reset. You can now log in.';
         this.passwordResetTokenForm.reset();
         
